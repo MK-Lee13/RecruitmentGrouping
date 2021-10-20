@@ -18,14 +18,24 @@ public class ShareResponseDto {
     private String desc;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private String nickname;
 
-    public ShareResponseDto(Long id, String url, String title, String desc, LocalDateTime startDate, LocalDateTime endDate) {
+    public ShareResponseDto(
+            Long id,
+            String url,
+            String title,
+            String desc,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            String nickname
+    ) {
         this.id = id;
         this.url = url;
         this.title = title;
         this.desc = desc;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.nickname = nickname;
     }
 
     public static ShareResponseDto of(ShareBoard shareBoard) {
@@ -35,7 +45,8 @@ public class ShareResponseDto {
                 shareBoard.getTitle(),
                 shareBoard.getDesc(),
                 shareBoard.getStartDate(),
-                shareBoard.getEndDate()
+                shareBoard.getEndDate(),
+                shareBoard.getUser().getNickName()
         );
     }
 
