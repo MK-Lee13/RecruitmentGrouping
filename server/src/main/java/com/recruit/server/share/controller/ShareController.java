@@ -6,6 +6,7 @@ import com.recruit.server.share.service.ShareService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,8 +29,11 @@ public class ShareController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createShareBoard(@Valid @RequestBody ShareRequestDto shareRequestDto) {
-        Long id = shareService.create(shareRequestDto);
+    public ResponseEntity<Void> createShareBoard(
+            @AuthenticationPrincipal String email,
+            @Valid @RequestBody ShareRequestDto shareRequestDto
+    ) {
+        Long id = shareService.create(email, shareRequestDto);
         return ResponseEntity.created(URI.create("api/shares/" + id)).build();
     }
 }

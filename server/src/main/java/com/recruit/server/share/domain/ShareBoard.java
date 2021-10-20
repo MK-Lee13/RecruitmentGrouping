@@ -1,6 +1,7 @@
 package com.recruit.server.share.domain;
 
 import com.recruit.server.common.domain.BaseTimeEntity;
+import com.recruit.server.user.domain.User;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -37,6 +38,10 @@ public class ShareBoard extends BaseTimeEntity {
 
     @Nullable
     private LocalDateTime endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Builder
     public ShareBoard(Long id, String url, String title, String desc, LocalDateTime startDate, LocalDateTime endDate) {
