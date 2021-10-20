@@ -1,6 +1,9 @@
 package com.recruit.server.share.dto;
 
 import com.recruit.server.share.domain.ShareBoard;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotEmpty;
@@ -11,6 +14,9 @@ import java.util.stream.Collectors;
 /**
  * Created by Minky on 2021-10-20
  */
+
+@NoArgsConstructor
+@Getter
 public class ShareResponseDto {
     private Long id;
     private String url;
