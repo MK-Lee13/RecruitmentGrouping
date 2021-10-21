@@ -250,7 +250,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
                 <DayAlert style={{ color: "white", backgroundColor: "red" }}>{distanceDay}일</DayAlert>
               </DayTop>
               <DayDate>{targetString}</DayDate>
-              <DayUrl href={element.url}>{element.url}</DayUrl>
+              <DayUrl href={element.url}>바로가기</DayUrl>
             </DayElement>)
           })}
         </OneDayBody>
@@ -267,7 +267,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
                 <DayAlert style={{ color: "white", backgroundColor: "#6289ED" }}>{distanceDay}일</DayAlert>
               </DayTop>
               <DayDate>{targetString}</DayDate>
-              <DayUrl href={element.url}>{element.url}</DayUrl>
+              <DayUrl href={element.url}>바로가기</DayUrl>
             </DayElement>)
           })}
         </ThreeDayBody>
@@ -284,7 +284,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
                 <DayAlert style={{ color: "white", backgroundColor: "#6289ED" }}>{distanceDay}일</DayAlert>
               </DayTop>
               <DayDate>{targetString}</DayDate>
-              <DayUrl href={element.url}>{element.url}</DayUrl>
+              <DayUrl href={element.url}>바로가기</DayUrl>
             </DayElement>)
           })}
           {/* onClick={() => redirectPage(element.url)} */}
