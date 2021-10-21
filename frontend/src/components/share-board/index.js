@@ -15,10 +15,10 @@ const DashboardBody = styled.div`
 const ShareBoardBody = styled.div`
     display: flex;
     flex-direction: row;
-    width: 90vw;
+    width: 100vw;
     height: 80vh;
     transition: all 0.1s ease;
-    padding: 10px;
+    padding-top: 10px;
 `;
 
 const DayHeader = styled.div`
@@ -42,9 +42,9 @@ const DayElement = styled.div`
     font-family: Noto Sans KR;
     font-size: 14px;
     font-weight: bold;
-    height: 80px;
     border: solid 1px #6289ED;
     border-radius: 10px;
+    padding: 5px;
 `;
 
 const DayTop = styled.div`
@@ -111,6 +111,7 @@ const OneDayBody = styled.div`
     border-radius: 10px;
     box-shadow: 2px 2px 1px 1px gray;
     margin-right: 20px;
+    margin-left: 10px;
 `;
 
 const ThreeDayBody = styled.div`
@@ -136,6 +137,7 @@ const OverWeekBody = styled.div`
     transition: all 0.1s ease;
     border-radius: 10px;
     box-shadow: 2px 2px 1px 1px gray;
+    margin-right: 10px;
 `;
 
 const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
