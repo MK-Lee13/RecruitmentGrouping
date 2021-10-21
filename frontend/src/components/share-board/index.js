@@ -37,7 +37,7 @@ const DayHeader = styled.div`
 
 const DayElement = styled.div`
     display: flex;
-    position: relative;
+    z-index: 10;
     flex-direction: column;
     font-family: Noto Sans KR;
     font-size: 14px;
@@ -45,6 +45,7 @@ const DayElement = styled.div`
     border: solid 1px #6289ED;
     border-radius: 10px;
     padding: 5px;
+    position: relative;
 `;
 
 const DayTop = styled.div`
@@ -62,6 +63,8 @@ const DayTitle = styled.div`
     font-family: Noto Sans KR;
     font-size: 14px;
     font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
 `;
 
 const DayAlert = styled.div`
@@ -72,12 +75,12 @@ const DayAlert = styled.div`
     top: -10px;
     right: -10px;
     font-family: Noto Sans KR;
-    background-color: #6289ED;
     border: solid 1px white;
     border-radius: 100px;
     width: 30px;
     height: 30px;
     font-size: 14px;
+    z-index: 9999;
 `;
 
 const DayDate = styled.div`
@@ -98,6 +101,8 @@ const DayUrl = styled.a`
     align-items: center;
     font-size: 14px;
     font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
 `;
 
 const OneDayBody = styled.div`
@@ -112,6 +117,14 @@ const OneDayBody = styled.div`
     box-shadow: 2px 2px 1px 1px gray;
     margin-right: 20px;
     margin-left: 10px;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    z-index: 10;
+    padding: 10px;
 `;
 
 const ThreeDayBody = styled.div`
@@ -125,6 +138,14 @@ const ThreeDayBody = styled.div`
     border-radius: 10px;
     box-shadow: 2px 2px 1px 1px gray;
     margin-right: 20px;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    z-index: 10;
+    padding: 10px;
 `;
 
 const OverWeekBody = styled.div`
@@ -138,6 +159,14 @@ const OverWeekBody = styled.div`
     border-radius: 10px;
     box-shadow: 2px 2px 1px 1px gray;
     margin-right: 10px;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    z-index: 10;
+    padding: 10px;
 `;
 
 const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
@@ -218,7 +247,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
             return (<DayElement key={index} >
               <DayTop>
                 <DayTitle>{element.title}</DayTitle>
-                <DayAlert style={{ color: "white", backgroundColor: "red" }}>{distanceDay}일 전</DayAlert>
+                <DayAlert style={{ color: "white", backgroundColor: "red" }}>{distanceDay}일</DayAlert>
               </DayTop>
               <DayDate>{targetString}</DayDate>
               <DayUrl href={element.url}>{element.url}</DayUrl>
@@ -252,7 +281,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
             return (<DayElement key={index} >
               <DayTop>
                 <DayTitle>{element.title}</DayTitle>
-                <DayAlert style={{ color: "white", backgroundColor: "#6289ED" }}>{distanceDay}일 전</DayAlert>
+                <DayAlert style={{ color: "white", backgroundColor: "#6289ED" }}>{distanceDay}일</DayAlert>
               </DayTop>
               <DayDate>{targetString}</DayDate>
               <DayUrl href={element.url}>{element.url}</DayUrl>
