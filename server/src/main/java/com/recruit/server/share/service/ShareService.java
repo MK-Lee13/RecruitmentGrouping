@@ -9,6 +9,7 @@ import com.recruit.server.user.domain.User;
 import com.recruit.server.user.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,7 @@ public class ShareService {
 
     @Transactional(readOnly = true)
     public List<ShareResponseDto> getShareBoards() {
-        List<ShareBoard> shareBoards = shareRepository.findAll();
+        List<ShareBoard> shareBoards = shareRepository.findAll(Sort.by(Sort.Direction.ASC, "endDate"));
         return listOf(shareBoards);
     }
 
