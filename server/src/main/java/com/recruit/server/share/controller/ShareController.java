@@ -23,6 +23,7 @@ import java.util.List;
 public class ShareController {
     private final ShareService shareService;
 
+    @CrossOrigin("*")
     @GetMapping
     public ResponseEntity<List<ShareResponseDto>> getShareBoards() {
         return ResponseEntity.ok(shareService.getShareBoards());

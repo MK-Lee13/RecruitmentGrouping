@@ -44,7 +44,7 @@ const LoginDashboard = ({ setErrorAlert, setAlertMessage, }) => {
   const login = () => {
     postNoHeader("/api/auth/signin", { body: { email: email, password: password } })
       .then(response => {
-        let token = response.data.access_token
+        let token = response.data.accessToken
         setCookie("token", token, 3)
         redirect("/share");
       })
@@ -82,7 +82,7 @@ const LoginDashboard = ({ setErrorAlert, setAlertMessage, }) => {
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
             <Button
-              sx={{ fontFamily: 'Noto Sans KR', fontWeight: 'bold', backgroundColor: '#FDF4DF', color: '#6289ED' }}
+              sx={{ fontFamily: 'Noto Sans KR', fontWeight: 'bold', backgroundColor: '#6289ED', color: 'white' }}
               startIcon={<LoginIcon />}
               variant="contained"
               onClick={login}

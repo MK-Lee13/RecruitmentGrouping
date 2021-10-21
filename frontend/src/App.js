@@ -4,12 +4,7 @@ import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import Box from '@mui/material/Box';
 import Login from './pages/login'
-// import Register from './pages/register'
-// import Storage from './pages/storage'
-// import Test from './pages/test'
-// import Schedule from './pages/schedule'
-// import ScheduleRegister from './pages/schedule-register'
-// import ScheduleWait from './pages/schedule-wait'
+import Share from './pages/share'
 import React from 'react'
 
 const App = () => {
@@ -41,46 +36,19 @@ const App = () => {
         </Collapse>
       </Box>
       <Switch>
-        {/* <Route exact path="/storage">
-                    <Storage
-                        setErrorAlert={setErrorAlert}
-                        setSuccessAlert={setSuccessAlert}
-                        setAlertMessage={setAlertMessage}
-                    />
-                </Route>
-                <Route exact path="/test">
-                    <Test />
-                </Route>
-                <Route exact path="/schedule">
-                    <Schedule
-                        setErrorAlert={setErrorAlert}
-                        setSuccessAlert={setSuccessAlert}
-                        setAlertMessage={setAlertMessage}
-                    />
-                </Route>
-                <Route exact path="/schedule/register">
-                    <ScheduleRegister
-                        setErrorAlert={setErrorAlert}
-                        setSuccessAlert={setSuccessAlert}
-                        setAlertMessage={setAlertMessage}
-                    />
-                </Route>
-                <Route exact path="/schedule/wait">
-                    <ScheduleWait
-                        setErrorAlert={setErrorAlert}
-                        setSuccessAlert={setSuccessAlert}
-                        setAlertMessage={setAlertMessage}
-                    />
-                </Route>
-                <Route exact path="/register">
-                    <Register />
-                </Route> */}
+        <Route exact path="/share">
+          <Share
+            setErrorAlert={setErrorAlert}
+            setSuccessAlert={setSuccessAlert}
+            setAlertMessage={setAlertMessage}
+          />
+        </Route>
         <Route exact path="/login">
           <Login
             setErrorAlert={setErrorAlert} setAlertMessage={setAlertMessage}
           />
         </Route>
-        <Redirect path="*" to="/login" />
+        <Redirect path="*" to="/share" />
       </Switch>
     </BrowserRouter >
   );
