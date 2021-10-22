@@ -45,8 +45,7 @@ const PlusButton = styled.div`
 const DayHeader = styled.div`
     display: flex;
     flex-direction: column;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-radius: 10px;
     color: white;
     background-color: #6289ED;
     font-family: Noto Sans KR;
