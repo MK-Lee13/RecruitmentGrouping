@@ -16,6 +16,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .exposedHeaders("X-AUTH-TOKEN")
+                .exposedHeaders("Location")
                 .allowedMethods(
                         HttpMethod.GET.name(),
                         HttpMethod.POST.name(),
