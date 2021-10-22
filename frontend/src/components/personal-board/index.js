@@ -3,8 +3,10 @@ import React from 'react'
 import { get } from '../../utils/api';
 import { redirect } from '../../utils/redirect';
 import { getCookie, deleteCookie } from '../../utils/cookie';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Header from '../header'
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import TextField from '@mui/material/TextField';
 import moment from 'moment';
 
 const DashboardBody = styled.div`
@@ -21,6 +23,24 @@ const PersonalBoardBody = styled.div`
     padding-top: 10px;
 `;
 
+const PlusButton = styled.div`
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    top: 0px;
+    right: 0px;
+    font-family: Noto Sans KR;
+    border: solid 1px white;
+    border-radius: 100px;
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    z-index: 9999;
+    cursor: pointer;
+`;
+
 const DayHeader = styled.div`
     display: flex;
     flex-direction: column;
@@ -32,7 +52,9 @@ const DayHeader = styled.div`
     align-items: center;
     font-size: 20px;
     font-weight: bold;
-    height: 40px;
+    min-height: 40px;
+    overflow: hidden;
+    white-space: nowrap;
 `;
 
 const DayElement = styled.div`
@@ -109,6 +131,7 @@ const DayUrl = styled.a`
 const OneDayBody = styled.div`
     display: flex;
     flex-direction: column;
+    position: relative;
     width: 15vw;
     min-width: 200px;
     min-height: 400px;
@@ -275,6 +298,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
   const [shareBoardList, setShareBoardList] = React.useState(null)
   const [noEndDates, setNoEndDates] = React.useState(null)
   const [detail, setDetail] = React.useState(null)
+  const [register, setRegister] = React.useState(null)
   const [oneDayBefores, setOneDayBefores] = React.useState(null)
   const [threeDayBefores, setThreeDayBefores] = React.useState(null)
   const [weekBefores, setWeekBefores] = React.useState(null)
@@ -385,22 +409,87 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
         </DetailElement>
       </DetailBody>
     )
+  }
 
+  const setRegisterView = () => {
+    return (
+      <DetailBody>
+        <CloseDetail onClick={closeRegisterView}>
+          <HighlightOffIcon />
+        </CloseDetail>
+        <DayHeader>등록하기</DayHeader>
+        <DetailElement>
+          <DetailHead>일정 이름</DetailHead>
+          <TextField
+            size="small"
+            variant="outlined"
+          />
+        </DetailElement>
+        <DetailElement>
+          <DetailHead>일정 정보</DetailHead>
+          <TextField
+            size="medium"
+            variant="outlined"
+            multiline="true"
+            minRows={4}
+            maxRows={10}
+          />
+        </DetailElement>
+        <DetailElement>
+          <DetailHead>일정 시작 날짜</DetailHead>
+          <TextField
+            placeholder="YYYY/MM/DD HH:mm:ss"
+            size="small"
+            variant="outlined"
+          />
+        </DetailElement>
+        <DetailElement>
+          <DetailHead>일정 마감 날짜</DetailHead>
+          <TextField
+            placeholder="YYYY/MM/DD HH:mm:ss"
+            size="small"
+            variant="outlined"
+          />
+        </DetailElement>
+        <DetailElement>
+          <DetailHead>추가 URL</DetailHead>
+          <TextField
+            placeholder="https://example.com"
+            size="small"
+            variant="outlined"
+          />
+        </DetailElement>
+      </DetailBody>
+    )
+  }
+
+  const openRegisterView = () => {
+    setDetail(null)
+    setRegister(true)
+  }
+
+  const closeRegisterView = () => {
+    setRegister(null)
   }
 
   const setDetailElement = (element) => {
+    setRegister(null)
     setDetail(element)
   }
 
-  const deleteDetailElement = (element) => {
+  const deleteDetailElement = () => {
     setDetail(null)
   }
+
 
   return (
     <DashboardBody>
       <Header name="개인 게시판"></Header>
       <PersonalBoardBody>
         <OneDayBody>
+          <PlusButton onClick={openRegisterView}>
+            <ControlPointIcon />
+          </PlusButton>
           <DayHeader>1일 전 공지</DayHeader>
           {oneDayBefores && oneDayBefores.map((element, index) => {
             let today = moment()
@@ -452,6 +541,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
           })}
         </OverWeekBody>
         {detail && setDetailView()}
+        {register && setRegisterView()}
       </PersonalBoardBody>
     </DashboardBody >
   );

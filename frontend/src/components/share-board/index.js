@@ -1,11 +1,13 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import React from 'react'
 import { get } from '../../utils/api';
 import { redirect } from '../../utils/redirect';
 import { getCookie, deleteCookie } from '../../utils/cookie';
 import Header from '../header'
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import moment from 'moment';
+import Detail from './detail'
+import Register from './register'
 
 const DashboardBody = styled.div`
     display: flex;
@@ -21,6 +23,25 @@ const ShareBoardBody = styled.div`
     padding-top: 10px;
 `;
 
+const PlusButton = styled.div`
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    top: 0px;
+    right: 0px;
+    font-family: Noto Sans KR;
+    border: solid 1px white;
+    border-radius: 100px;
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    z-index: 9999;
+    cursor: pointer;
+`;
+
+
 const DayHeader = styled.div`
     display: flex;
     flex-direction: column;
@@ -32,7 +53,9 @@ const DayHeader = styled.div`
     align-items: center;
     font-size: 20px;
     font-weight: bold;
-    height: 40px;
+    min-height: 40px;
+    overflow: hidden;
+    white-space: nowrap;
 `;
 
 const DayElement = styled.div`
@@ -109,6 +132,7 @@ const DayUrl = styled.a`
 const OneDayBody = styled.div`
     display: flex;
     flex-direction: column;
+    position: relative;
     width: 15vw;
     min-width: 200px;
     min-height: 400px;
@@ -167,118 +191,57 @@ const OverWeekBody = styled.div`
     padding: 10px;
 `;
 
-const BoxIn = keyframes`
-    100% {
-      transform: translateX(0%);
-      -webkit-transform: translateX(0%);
-    }
-`
-
-const DetailBody = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-self: end;
-    width: 20vw;
-    min-width: 400px;
-    min-height: 400px;
-    height: 100%;
-    border-radius: 10px;
-    box-shadow: 2px 2px 1px 1px gray;
-    margin-left: auto;
-    margin-right: 40px;
-    overflow-y: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    z-index: 10;
-    padding: 10px;
-    animation: ${BoxIn} 0.5s forwards;
-    -webkit-animation: ${BoxIn} 0.5s forwards;
-    animation-delay: 0.1s;
-    -webkit-animation-delay: 0.1s;
-    transform: translateX(120%);
-    -webkit-transform: translateX(120%);
-`;
-
-const DetailElement = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;
-    padding-left: 2px;
-    padding-right: 2px;
-    border-radius: 10px;
-    border: solid 1px #6289ED;
-    margin-top: 5px;
-    margin-bottom: 5px;
-`;
-
-const DetailAlert = styled.div`
-    display: flex;
-    position: absolute;
-    align-items: center;
-    justify-content: center;
-    top: 0px;
-    left: 0px;
-    font-family: Noto Sans KR;
-    border: solid 1px white;
-    border-radius: 100px;
-    width: 30px;
-    height: 30px;
-    font-size: 14px;
-    z-index: 9999;
-`;
-
-const CloseDetail = styled.div`
-    display: flex;
-    position: absolute;
-    align-items: center;
-    justify-content: center;
-    top: 0px;
-    right: 0px;
-    border-radius: 100px;
-    background-color: white;
-    width: 30px;
-    height: 30px;
-    z-index: 9999;
-    cursor: pointer;
-`;
-
-
-const DetailHead = styled.div`
-    display: flex;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    flex-direction: column;
-    color: white;
-    background-color: #6289ED;
-    border-radius: 5px;
-    font-family: Noto Sans KR;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-`;
-
-const DetailTitle = styled.div`
-    display: flex;
-    margin-bottom: 10px;
-    flex-direction: column;
-    color: #6289ED;
-    font-family: Noto Sans KR;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-`;
-
 const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
   const [page, setPage] = React.useState(1)
   const [shareBoardList, setShareBoardList] = React.useState(null)
   const [noEndDates, setNoEndDates] = React.useState(null)
   const [detail, setDetail] = React.useState(null)
+  const [register, setRegister] = React.useState(null)
   const [oneDayBefores, setOneDayBefores] = React.useState(null)
   const [threeDayBefores, setThreeDayBefores] = React.useState(null)
   const [weekBefores, setWeekBefores] = React.useState(null)
+
+  const refreshShareBoardList = (newBoard) => {
+    let shareBoards = []
+    let noEndDates = []
+    let oneDays = []
+    let threeDays = []
+    let overWeeks = []
+    let today = moment()
+    shareBoards.push(newBoard)
+
+    for (let shareBoard of shareBoardList) {
+      if (shareBoard.endDate == null) {
+        noEndDates.push(shareBoard)
+        continue
+      }
+      shareBoards.push(shareBoard)
+    }
+
+    shareBoards.sort((a, b) => {
+      let targetA = moment(a.endDate, "YYYY/MM/DD HH:mm:ss")
+      let targetB = moment(b.endDate, "YYYY/MM/DD HH:mm:ss")
+      return moment.duration(targetA.diff(targetB)).asDays()
+    })
+
+    for (let shareBoard of shareBoards) {
+      let target = moment(shareBoard.endDate, "YYYY/MM/DD HH:mm:ss")
+      let distanceDay = moment.duration(target.diff(today)).asDays()
+      if (distanceDay > 7) {
+        overWeeks.push(shareBoard)
+      } else if (distanceDay > 3) {
+        threeDays.push(shareBoard)
+      } else if (distanceDay > 0) {
+        oneDays.push(shareBoard)
+      }
+    }
+
+    setNoEndDates(noEndDates)
+    setOneDayBefores(oneDays)
+    setThreeDayBefores(threeDays)
+    setWeekBefores(overWeeks)
+    setShareBoardList(shareBoards)
+  }
 
   const getShareBoardList = () => {
     get(`/api/shares`, {
@@ -296,7 +259,6 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
         for (let shareBoard of response.data) {
           if (shareBoard.endDate == null) {
             noEndDates.push(shareBoard)
-            setShareBoardList(shareBoards)
             continue
           }
           let target = moment(shareBoard.endDate, "YYYY/MM/DD HH:mm:ss")
@@ -332,72 +294,21 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
     getShareBoardList()
   }, [])
 
-  const setDetailView = () => {
-    let today = moment()
-    let end = moment(detail.endDate, "YYYY/MM/DD HH:mm:ss")
-    let endString = end.format("YYYY년MM월DD일 HH시간mm분")
-    let startString = "정보가 없습니다."
-    let desc = "정보가 없습니다."
-    let bgColor = "green"
+  const openRegisterView = () => {
+    setDetail(null)
+    setRegister(true)
+  }
 
-    if (detail.desc !== null) {
-      desc = detail.desc
-    }
-    if (detail.startDate !== null && detail.startDate !== "") {
-      let start = moment(detail.startDate, "YYYY/MM/DD HH:mm:ss")
-      startString = start.format("YYYY년MM월DD일 HH시간mm분")
-    }
-
-    let distanceDay = parseInt(moment.duration(end.diff(today)).asDays())
-
-    if (distanceDay >= 7) {
-      bgColor = "green"
-    } else if (distanceDay >= 3) {
-      bgColor = "orange"
-    } else if (distanceDay >= 0) {
-      bgColor = "red"
-    }
-    return (
-      <DetailBody>
-        <DetailAlert style={{ color: "white", backgroundColor: bgColor }}>{distanceDay}일</DetailAlert>
-        <CloseDetail onClick={deleteDetailElement}>
-          <HighlightOffIcon />
-        </CloseDetail>
-        <DayHeader>상세보기</DayHeader>
-        <DetailElement>
-          <DetailHead>공고 이름</DetailHead>
-          <DetailTitle>{detail.title}</DetailTitle>
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>공고 정보</DetailHead>
-          <DetailTitle>{desc}</DetailTitle>
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>공고 시작 날짜</DetailHead>
-          <DetailTitle>{startString}</DetailTitle>
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>공고 마감 날짜</DetailHead>
-          <DetailTitle>{endString}</DetailTitle>
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>공고 URL</DetailHead>
-          <DayUrl href={detail.url}>바로가기</DayUrl>
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>작성자</DetailHead>
-          <DetailTitle>{detail.nickname}</DetailTitle>
-        </DetailElement>
-      </DetailBody>
-    )
-
+  const closeRegisterView = () => {
+    setRegister(null)
   }
 
   const setDetailElement = (element) => {
+    setRegister(null)
     setDetail(element)
   }
 
-  const deleteDetailElement = (element) => {
+  const deleteDetailElement = () => {
     setDetail(null)
   }
 
@@ -406,6 +317,9 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
       <Header name="취업 공유 게시판"></Header>
       <ShareBoardBody>
         <OneDayBody>
+          <PlusButton onClick={openRegisterView}>
+            <ControlPointIcon />
+          </PlusButton>
           <DayHeader>1일 전 취업 공지</DayHeader>
           {oneDayBefores && oneDayBefores.map((element, index) => {
             let today = moment()
@@ -456,7 +370,16 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
             </DayElement>)
           })}
         </OverWeekBody>
-        {detail && setDetailView()}
+        {detail && <Detail
+          detail={detail}
+          deleteDetailElement={deleteDetailElement}
+        />}
+        {register && <Register
+          refreshShareBoardList={refreshShareBoardList}
+          closeRegisterView={closeRegisterView}
+          setAlertMessage={setAlertMessage}
+          setErrorAlert={setErrorAlert}
+        />}
       </ShareBoardBody>
     </DashboardBody >
   );
