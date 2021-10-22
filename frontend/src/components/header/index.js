@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import React from 'react'
-// import Menu from '../menu'
+import FadeMenu from '../menu'
 
 const HeaderBody = styled.div`
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     width: 100%;
     height: 64px;
     transition: all 0.1s ease;
@@ -25,7 +26,9 @@ const Header = ({ name }) => {
   return (
     <HeaderBody style={{ backgroundColor: '#6289ED' }}>
       <HeaderCol>{name}</HeaderCol>
-      {/* <Menu></Menu> */}
+      <HeaderCol>
+        <FadeMenu></FadeMenu>
+      </HeaderCol>
     </HeaderBody>
   );
 }

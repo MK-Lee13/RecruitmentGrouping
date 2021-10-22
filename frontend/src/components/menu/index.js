@@ -1,95 +1,99 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
+import IconButton from '@mui/material/IconButton';
+import AppsIcon from '@mui/icons-material/Apps';
+import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Stack from '@mui/material/Stack';
+import Fade from '@mui/material/Fade';
+import { useHistory, useLocation } from "react-router-dom";
+import { deleteCookie } from '../../utils/cookie';
 
-export default function MenuListComposition() {
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef(null);
+export default function FadeMenu() {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [where, setWhere] = React.useState("");
+  const history = useHistory();
+  const location = useLocation();
 
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+  React.useEffect(() => {
+    let path = location.pathname
+    if (path === "/share") {
+      setWhere("취업 공유 게시판")
+    } else if (path === "/personal") {
+      setWhere("개인 게시판")
+    } else {
+      setWhere("로그아웃")
+    }
+  }, [])
+
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
   const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
+    let value = event.target.innerText
+    setWhere(value)
+    if (value === "취업 공유 게시판") {
+      history.push("share");
+    } else if (value === "개인 게시판") {
+      history.push("personal");
+    } else if (value === "로그아웃") {
+      deleteCookie("token", "")
+      history.push("login");
     }
-
-    setOpen(false);
+    setAnchorEl(null);
   };
 
-  function handleListKeyDown(event) {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      setOpen(false);
-    } else if (event.key === 'Escape') {
-      setOpen(false);
-    }
-  }
-
-  const prevOpen = React.useRef(open);
-  React.useEffect(() => {
-    if (prevOpen.current === true && open === false) {
-      anchorRef.current.focus();
-    }
-
-    prevOpen.current = open;
-  }, [open]);
-
   return (
-    <Stack direction="row" spacing={2}>
-      <div>
-        <Button
-          ref={anchorRef}
-          id="composition-button"
-          aria-controls={open ? 'composition-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}
-        >
-          Dashboard
-        </Button>
-        <Popper
-          open={open}
-          anchorEl={anchorRef.current}
-          role={undefined}
-          placement="bottom-start"
-          transition
-          disablePortal
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin:
-                  placement === 'bottom-start' ? 'left top' : 'left bottom',
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList
-                    autoFocusItem={open}
-                    id="composition-menu"
-                    aria-labelledby="composition-button"
-                    onKeyDown={handleListKeyDown}
-                  >
-                    <MenuItem onClick={handleClose}>프로필</MenuItem>
-                    <MenuItem onClick={handleClose}>취업 공유 게시판</MenuItem>
-                    <MenuItem onClick={handleClose}>개인 게시판</MenuItem>
-                    <MenuItem onClick={handleClose}>로그아웃</MenuItem>
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
-      </div>
-    </Stack>
+    <div>
+      <IconButton
+        aria-label="more"
+        id="long-button"
+        aria-controls="long-menu"
+        aria-expanded={open ? 'true' : undefined}
+        aria-haspopup="true"
+        style={{ color: 'white' }}
+        onClick={handleClick}
+      >
+        <AppsIcon />
+      </IconButton>
+      <Menu
+        id="fade-menu"
+        MenuListProps={{
+          'aria-labelledby': 'fade-button',
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Fade}
+      >
+        <MenuItem
+          onClick={handleClose}
+          style={{
+            fontFamily: 'Noto Sans KR',
+            fontSize: '14px',
+            fontWeight: 'bold',
+          }}>
+          취업 공유 게시판
+        </MenuItem>
+        <MenuItem
+          onClick={handleClose}
+          style={{
+            fontFamily: 'Noto Sans KR',
+            fontSize: '14px',
+            fontWeight: 'bold',
+          }}>
+          개인 게시판
+        </MenuItem>
+        <MenuItem
+          onClick={handleClose}
+          style={{
+            fontFamily: 'Noto Sans KR',
+            fontSize: '14px',
+            fontWeight: 'bold',
+          }}>
+          로그아웃
+        </MenuItem>
+      </Menu>
+    </div>
   );
 }
