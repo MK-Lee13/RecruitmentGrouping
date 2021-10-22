@@ -4,6 +4,7 @@ import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import Box from '@mui/material/Box';
 import Login from './pages/login'
+import Personal from './pages/personal'
 import Share from './pages/share'
 import React from 'react'
 
@@ -36,6 +37,13 @@ const App = () => {
         </Collapse>
       </Box>
       <Switch>
+        <Route exact path="/personal">
+          <Personal
+            setErrorAlert={setErrorAlert}
+            setSuccessAlert={setSuccessAlert}
+            setAlertMessage={setAlertMessage}
+          />
+        </Route>
         <Route exact path="/share">
           <Share
             setErrorAlert={setErrorAlert}

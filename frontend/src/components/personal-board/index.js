@@ -3,8 +3,8 @@ import React from 'react'
 import { get } from '../../utils/api';
 import { redirect } from '../../utils/redirect';
 import { getCookie, deleteCookie } from '../../utils/cookie';
-import Header from '../header'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import Header from '../header'
 import moment from 'moment';
 
 const DashboardBody = styled.div`
@@ -13,7 +13,7 @@ const DashboardBody = styled.div`
     width: 100%;
 `
 
-const ShareBoardBody = styled.div`
+const PersonalBoardBody = styled.div`
     display: flex;
     flex-direction: row;
     width: 100vw;
@@ -245,7 +245,6 @@ const CloseDetail = styled.div`
     cursor: pointer;
 `;
 
-
 const DetailHead = styled.div`
     display: flex;
     margin-top: 4px;
@@ -281,7 +280,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
   const [weekBefores, setWeekBefores] = React.useState(null)
 
   const getShareBoardList = () => {
-    get(`/api/shares`, {
+    get(`/api/personals`, {
       headers: {
         "X-AUTH-TOKEN": getCookie("token")
       }
@@ -384,10 +383,6 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
           <DetailHead>공고 URL</DetailHead>
           <DayUrl href={detail.url}>바로가기</DayUrl>
         </DetailElement>
-        <DetailElement>
-          <DetailHead>작성자</DetailHead>
-          <DetailTitle>{detail.nickname}</DetailTitle>
-        </DetailElement>
       </DetailBody>
     )
 
@@ -403,10 +398,10 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
 
   return (
     <DashboardBody>
-      <Header name="취업 공유 게시판"></Header>
-      <ShareBoardBody>
+      <Header name="개인 게시판"></Header>
+      <PersonalBoardBody>
         <OneDayBody>
-          <DayHeader>1일 전 취업 공지</DayHeader>
+          <DayHeader>1일 전 공지</DayHeader>
           {oneDayBefores && oneDayBefores.map((element, index) => {
             let today = moment()
             let target = moment(element.endDate, "YYYY/MM/DD HH:mm:ss")
@@ -423,7 +418,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
           })}
         </OneDayBody>
         <ThreeDayBody>
-          <DayHeader>3일 전 취업 공지</DayHeader>
+          <DayHeader>3일 전 공지</DayHeader>
           {threeDayBefores && threeDayBefores.map((element, index) => {
             let today = moment()
             let target = moment(element.endDate, "YYYY/MM/DD HH:mm:ss")
@@ -440,7 +435,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
           })}
         </ThreeDayBody>
         <OverWeekBody>
-          <DayHeader>일주일 전 취업 공지</DayHeader>
+          <DayHeader>일주일 전 공지</DayHeader>
           {weekBefores && weekBefores.map((element, index) => {
             let today = moment()
             let target = moment(element.endDate, "YYYY/MM/DD HH:mm:ss")
@@ -457,7 +452,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
           })}
         </OverWeekBody>
         {detail && setDetailView()}
-      </ShareBoardBody>
+      </PersonalBoardBody>
     </DashboardBody >
   );
 }

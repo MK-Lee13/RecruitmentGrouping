@@ -15,8 +15,8 @@ const HeaderCol = styled.div`
     display: flex;
     font-family: Noto Sans KR;
     align-items: center;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
     font-size: 20px;
     font-weight: bold;
     color: white;
