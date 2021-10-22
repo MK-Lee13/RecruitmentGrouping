@@ -68,6 +68,8 @@ const DayElement = styled.div`
     border-radius: 10px;
     padding: 5px;
     position: relative;
+    margin-top: 2px;
+    margin-bottom: 2px;
 `;
 
 const DayTop = styled.div`
