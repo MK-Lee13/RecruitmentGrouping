@@ -2,6 +2,7 @@ package com.recruit.server.user.domain;
 
 
 import com.recruit.server.common.domain.BaseTimeEntity;
+import com.recruit.server.personal.domain.PersonalBoard;
 import com.recruit.server.share.domain.ShareBoard;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -52,6 +53,9 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<ShareBoard> shareBoards;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<PersonalBoard> personalBoards;
 
     @Builder
     public User(Long id, String nickName, String email, String password, UserRole userRole, Boolean accessNotify) {
