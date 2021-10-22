@@ -138,7 +138,7 @@ const OneDayBody = styled.div`
     min-height: 400px;
     height: 100%;
     border-radius: 10px;
-    box-shadow: 2px 2px 1px 1px gray;
+    border: solid 1px #d3d3d3;
     margin-right: 20px;
     margin-left: 10px;
     overflow-y: auto;
@@ -159,7 +159,7 @@ const ThreeDayBody = styled.div`
     min-height: 400px;
     height: 100%;
     border-radius: 10px;
-    box-shadow: 2px 2px 1px 1px gray;
+    border: solid 1px #d3d3d3;
     margin-right: 20px;
     overflow-y: auto;
     -ms-overflow-style: none;
@@ -179,7 +179,7 @@ const OverWeekBody = styled.div`
     min-height: 400px;
     height: 100%;
     border-radius: 10px;
-    box-shadow: 2px 2px 1px 1px gray;
+    border: solid 1px #d3d3d3;
     margin-right: 10px;
     overflow-y: auto;
     -ms-overflow-style: none;

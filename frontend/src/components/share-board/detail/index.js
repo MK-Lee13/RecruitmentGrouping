@@ -47,7 +47,7 @@ const DetailBody = styled.div`
     min-height: 400px;
     height: 100%;
     border-radius: 10px;
-    box-shadow: 2px 2px 1px 1px gray;
+    border: solid 1px #d3d3d3;
     margin-left: auto;
     margin-right: 40px;
     overflow-y: auto;
