@@ -62,5 +62,6 @@ public class PersonalService {
                 personalBoardList = new ArrayList<>();
             }
         }
+        personalRepository.saveAll(personalBoardList);
     }
 }

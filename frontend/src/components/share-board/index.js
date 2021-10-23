@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React from 'react'
-import { get } from '../../utils/api';
+import { get, post } from '../../utils/api';
 import { redirect } from '../../utils/redirect';
 import { getCookie, deleteCookie } from '../../utils/cookie';
 import Header from '../header'
@@ -22,6 +22,26 @@ const ShareBoardBody = styled.div`
     height: 80vh;
     padding-top: 10px;
 `;
+
+const ClickAlert = styled.div`
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    top: 70px;
+    left: 8px;
+    font-family: Noto Sans KR;
+    border: solid 1px white;
+    border-radius: 100px;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    background-color: green;
+    color: white;
+    z-index: 9999;
+    cursor: pointer;
+`;
+
 
 const PlusButton = styled.div`
     display: flex;
@@ -70,6 +90,9 @@ const DayElement = styled.div`
     position: relative;
     margin-top: 2px;
     margin-bottom: 2px;
+    background: ${props => {
+    return props.color || ''
+  }};
 `;
 
 const DayTop = styled.div`
@@ -201,6 +224,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
   const [oneDayBefores, setOneDayBefores] = React.useState(null)
   const [threeDayBefores, setThreeDayBefores] = React.useState(null)
   const [weekBefores, setWeekBefores] = React.useState(null)
+  const [selectBoards, setSelectBoards] = React.useState([])
 
   const refreshShareBoardList = (newBoard) => {
     let shareBoards = []
@@ -242,6 +266,55 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
     setThreeDayBefores(threeDays)
     setWeekBefores(overWeeks)
     setShareBoardList(shareBoards)
+  }
+
+  const uploadBoardsToUser = () => {
+    let body = []
+    for (let select of selectBoards) {
+      let start = select.startDate
+      let end = select.endDate
+
+      if (start === null || start === "") {
+        start = null
+      } else {
+        start = moment(start, "YYYY/MM/DD HH:mm:ss").format('YYYY/MM/DD HH:mm:ss')
+      }
+
+      if (end === null || end === "") {
+        end = null
+      } else {
+        end = moment(end, "YYYY/MM/DD HH:mm:ss").format('YYYY/MM/DD HH:mm:ss')
+      }
+      select.startDate = start
+      select.endDate = end
+      body.push(select)
+      console.log(start)
+      console.log(end)
+    }
+
+    let payload = {
+      body: body,
+      headers: {
+        "X-AUTH-TOKEN": getCookie("token")
+      }
+    }
+    post(`/api/personals/batch`, payload)
+      .then(response => {
+        refreshSelectBoards()
+        setAlertMessage("업로드 완료")
+        setSuccessAlert(true)
+        setTimeout(() => setSuccessAlert(false), 2000);
+      }).catch(error => {
+        console.log(error)
+        if (error.response.status === 401) {
+          deleteCookie("token", "")
+          redirect("/login");
+        } else {
+          setAlertMessage("의도치 못한 버그 - 개발자에게 문의하세요")
+          setErrorAlert(true)
+          setTimeout(() => setErrorAlert(false), 2000);
+        }
+      })
   }
 
   const getShareBoardList = () => {
@@ -288,7 +361,6 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
           setTimeout(() => setErrorAlert(false), 2000);
         }
       })
-
   }
 
   React.useEffect(() => {
@@ -304,7 +376,8 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
     setRegister(null)
   }
 
-  const setDetailElement = (element) => {
+  const setDetailElement = (event, element) => {
+    event.stopPropagation()
     setRegister(null)
     setDetail(element)
   }
@@ -313,10 +386,45 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
     setDetail(null)
   }
 
+  const refreshSelectBoards = () => {
+    setSelectBoards([])
+    setOneDayBefores(deepCopy(oneDayBefores))
+    setThreeDayBefores(deepCopy(threeDayBefores))
+    setWeekBefores(deepCopy(weekBefores))
+  }
+
+  const appendSelectBoards = (element) => {
+    let sb = selectBoards
+    let index = sb.indexOf(element)
+    if (index === -1) {
+      sb.push(element)
+      setSelectBoards(sb)
+    } else {
+      sb.splice(index, 1)
+      setSelectBoards(sb)
+    }
+    setOneDayBefores(deepCopy(oneDayBefores))
+    setThreeDayBefores(deepCopy(threeDayBefores))
+    setWeekBefores(deepCopy(weekBefores))
+  }
+
+  const deepCopy = (list) => {
+    let copy = []
+    for (let el of list) {
+      copy.push(el)
+    }
+    return copy
+  }
+
   return (
     <DashboardBody>
       <Header name="취업 공유 게시판"></Header>
       <ShareBoardBody>
+        {selectBoards.length !== 0 &&
+          <ClickAlert onClick={uploadBoardsToUser}>
+            {selectBoards.length}+
+          </ClickAlert>
+        }
         <OneDayBody>
           <PlusButton onClick={openRegisterView}>
             <ControlPointIcon />
@@ -327,9 +435,17 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
             let target = moment(element.endDate, "YYYY/MM/DD HH:mm:ss")
             let targetString = target.format("YYYY년MM월DD일 HH시간mm분")
             let distanceDay = parseInt(moment.duration(target.diff(today)).asDays())
-            return (<DayElement key={index} >
+            let clickColor = ""
+            if (selectBoards.indexOf(element) !== -1) {
+              clickColor = "#d3d3d3 !important"
+            }
+            return (<DayElement
+              color={clickColor}
+              key={index}
+              onClick={() => appendSelectBoards(element)}
+            >
               <DayTop>
-                <DayTitle onClick={() => setDetailElement(element)} >{element.title}</DayTitle>
+                <DayTitle onClick={(event) => setDetailElement(event, element)} >{element.title}</DayTitle>
                 <DayAlert style={{ color: "white", backgroundColor: "red" }}>{distanceDay}일</DayAlert>
               </DayTop>
               <DayDate>{targetString}</DayDate>
@@ -344,9 +460,17 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
             let target = moment(element.endDate, "YYYY/MM/DD HH:mm:ss")
             let targetString = target.format("YYYY년MM월DD일 HH시간mm분")
             let distanceDay = parseInt(moment.duration(target.diff(today)).asDays())
-            return (<DayElement key={index} >
+            let clickColor = ""
+            if (selectBoards.indexOf(element) !== -1) {
+              clickColor = "#d3d3d3 !important"
+            }
+            return (<DayElement
+              color={clickColor}
+              key={index}
+              onClick={() => appendSelectBoards(element)}
+            >
               <DayTop>
-                <DayTitle onClick={() => setDetailElement(element)} >{element.title}</DayTitle>
+                <DayTitle onClick={(event) => setDetailElement(event, element)} >{element.title}</DayTitle>
                 <DayAlert style={{ color: "white", backgroundColor: "orange" }}>{distanceDay}일</DayAlert>
               </DayTop>
               <DayDate>{targetString}</DayDate>
@@ -361,9 +485,17 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
             let target = moment(element.endDate, "YYYY/MM/DD HH:mm:ss")
             let targetString = target.format("YYYY년MM월DD일 HH시간mm분")
             let distanceDay = parseInt(moment.duration(target.diff(today)).asDays())
-            return (<DayElement key={index} >
+            let clickColor = ""
+            if (selectBoards.indexOf(element) !== -1) {
+              clickColor = "#d3d3d3 !important"
+            }
+            return (<DayElement
+              color={clickColor}
+              key={index}
+              onClick={() => appendSelectBoards(element)}
+            >
               <DayTop>
-                <DayTitle onClick={() => setDetailElement(element)} >{element.title}</DayTitle>
+                <DayTitle onClick={(event) => setDetailElement(event, element)} >{element.title}</DayTitle>
                 <DayAlert style={{ color: "white", backgroundColor: "green" }}>{distanceDay}일</DayAlert>
               </DayTop>
               <DayDate>{targetString}</DayDate>

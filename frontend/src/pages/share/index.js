@@ -1,7 +1,7 @@
 import ShareBoard from '../../components/share-board';
 const Share = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
   return (
-    <ShareBoard setErrorAlert={setErrorAlert} setAlertMessage={setAlertMessage}></ShareBoard>
+    <ShareBoard setErrorAlert={setErrorAlert} setSuccessAlert={setSuccessAlert} setAlertMessage={setAlertMessage}></ShareBoard>
   )
 }
 

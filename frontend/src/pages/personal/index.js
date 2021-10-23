@@ -1,7 +1,7 @@
 import PersonalBoard from '../../components/personal-board';
 const Personal = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
   return (
-    <PersonalBoard setErrorAlert={setErrorAlert} setAlertMessage={setAlertMessage}></PersonalBoard>
+    <PersonalBoard setErrorAlert={setErrorAlert} setSuccessAlert={setSuccessAlert} setAlertMessage={setAlertMessage}></PersonalBoard>
   )
 }
 
