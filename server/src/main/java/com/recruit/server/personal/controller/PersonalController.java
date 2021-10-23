@@ -40,4 +40,13 @@ public class PersonalController {
         Long id = personalService.create(email, personalRequestDto);
         return ResponseEntity.created(URI.create("api/shares/" + id)).build();
     }
+
+    @PostMapping("/batch")
+    public ResponseEntity<Void> multiInsertPersonalBoard(
+            @AuthenticationPrincipal String email,
+            @Valid @RequestBody List<PersonalRequestDto> personalRequestDtoList
+    ) {
+        personalService.batchInsert(email, personalRequestDtoList);
+        return ResponseEntity.ok().build();
+    }
 }

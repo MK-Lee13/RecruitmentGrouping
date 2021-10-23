@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.recruit.server.personal.dto.PersonalResponseDto.listOf;
@@ -43,5 +44,23 @@ public class PersonalService {
         entityToShareBoard.setUser(user);
         PersonalBoard personalBoard = personalRepository.save(entityToShareBoard);
         return personalBoard.getId();
+    }
+
+    @Transactional
+    public void batchInsert(String email, List<PersonalRequestDto> personalRequestDtoList) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(NotFoundEmailException::new);
+        List<PersonalBoard> personalBoardList = new ArrayList<>();
+        int batchCount = 0;
+        for (PersonalRequestDto personalRequestDto : personalRequestDtoList) {
+            PersonalBoard personalBoard = personalRequestDto.toEntity();
+            personalBoard.setUser(user);
+            personalBoardList.add(personalBoard);
+            batchCount += 1;
+            if (batchCount % 100 == 0) {
+                personalRepository.saveAll(personalBoardList);
+                personalBoardList = new ArrayList<>();
+            }
+        }
     }
 }
