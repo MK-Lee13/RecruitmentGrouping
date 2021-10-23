@@ -4,10 +4,10 @@ import { get } from '../../utils/api';
 import { redirect } from '../../utils/redirect';
 import { getCookie, deleteCookie } from '../../utils/cookie';
 import Header from '../header'
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import TextField from '@mui/material/TextField';
 import moment from 'moment';
+import Detail from './detail'
+import Register from './register'
 
 const DashboardBody = styled.div`
     display: flex;
@@ -40,6 +40,7 @@ const PlusButton = styled.div`
     z-index: 9999;
     cursor: pointer;
 `;
+
 
 const DayHeader = styled.div`
     display: flex;
@@ -191,118 +192,57 @@ const OverWeekBody = styled.div`
     padding: 10px;
 `;
 
-const BoxIn = keyframes`
-    100% {
-      transform: translateX(0%);
-      -webkit-transform: translateX(0%);
-    }
-`
-
-const DetailBody = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-self: end;
-    width: 20vw;
-    min-width: 400px;
-    min-height: 400px;
-    height: 100%;
-    border-radius: 10px;
-    border: solid 1px #d3d3d3;
-    margin-left: auto;
-    margin-right: 40px;
-    overflow-y: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    z-index: 10;
-    padding: 10px;
-    animation: ${BoxIn} 0.5s forwards;
-    -webkit-animation: ${BoxIn} 0.5s forwards;
-    animation-delay: 0.1s;
-    -webkit-animation-delay: 0.1s;
-    transform: translateX(120%);
-    -webkit-transform: translateX(120%);
-`;
-
-const DetailElement = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;
-    padding-left: 2px;
-    padding-right: 2px;
-    border-radius: 10px;
-    border: solid 1px #6289ED;
-    margin-top: 5px;
-    margin-bottom: 5px;
-`;
-
-const DetailAlert = styled.div`
-    display: flex;
-    position: absolute;
-    align-items: center;
-    justify-content: center;
-    top: 0px;
-    left: 0px;
-    font-family: Noto Sans KR;
-    border: solid 1px white;
-    border-radius: 100px;
-    width: 30px;
-    height: 30px;
-    font-size: 14px;
-    z-index: 9999;
-`;
-
-const CloseDetail = styled.div`
-    display: flex;
-    position: absolute;
-    align-items: center;
-    justify-content: center;
-    top: 0px;
-    right: 0px;
-    border-radius: 100px;
-    background-color: white;
-    width: 30px;
-    height: 30px;
-    z-index: 9999;
-    cursor: pointer;
-`;
-
-const DetailHead = styled.div`
-    display: flex;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    flex-direction: column;
-    color: white;
-    background-color: #6289ED;
-    border-radius: 5px;
-    font-family: Noto Sans KR;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-`;
-
-const DetailTitle = styled.div`
-    display: flex;
-    margin-bottom: 10px;
-    flex-direction: column;
-    color: #6289ED;
-    font-family: Noto Sans KR;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-`;
-
 const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
   const [page, setPage] = React.useState(1)
-  const [shareBoardList, setShareBoardList] = React.useState(null)
+  const [personalBoardList, setPersonalBoardList] = React.useState(null)
   const [noEndDates, setNoEndDates] = React.useState(null)
   const [detail, setDetail] = React.useState(null)
   const [register, setRegister] = React.useState(null)
   const [oneDayBefores, setOneDayBefores] = React.useState(null)
   const [threeDayBefores, setThreeDayBefores] = React.useState(null)
   const [weekBefores, setWeekBefores] = React.useState(null)
+
+  const refreshPersonalBoardList = (newBoard) => {
+    let personalBoards = []
+    let noEndDates = []
+    let oneDays = []
+    let threeDays = []
+    let overWeeks = []
+    let today = moment()
+    personalBoards.push(newBoard)
+
+    for (let personalBoard of personalBoardList) {
+      if (personalBoard.endDate == null) {
+        noEndDates.push(personalBoard)
+        continue
+      }
+      personalBoards.push(personalBoard)
+    }
+
+    personalBoards.sort((a, b) => {
+      let targetA = moment(a.endDate, "YYYY/MM/DD HH:mm:ss")
+      let targetB = moment(b.endDate, "YYYY/MM/DD HH:mm:ss")
+      return moment.duration(targetA.diff(targetB)).asDays()
+    })
+
+    for (let personalBoard of personalBoards) {
+      let target = moment(personalBoard.endDate, "YYYY/MM/DD HH:mm:ss")
+      let distanceDay = moment.duration(target.diff(today)).asDays()
+      if (distanceDay > 7) {
+        overWeeks.push(personalBoard)
+      } else if (distanceDay > 3) {
+        threeDays.push(personalBoard)
+      } else if (distanceDay > 0) {
+        oneDays.push(personalBoard)
+      }
+    }
+
+    setNoEndDates(noEndDates)
+    setOneDayBefores(oneDays)
+    setThreeDayBefores(threeDays)
+    setWeekBefores(overWeeks)
+    setPersonalBoardList(personalBoards)
+  }
 
   const getShareBoardList = () => {
     get(`/api/personals`, {
@@ -311,34 +251,33 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
       }
     })
       .then(response => {
-        let shareBoards = []
+        let personalBoards = []
         let noEndDates = []
         let oneDays = []
         let threeDays = []
         let overWeeks = []
         let today = moment()
-        for (let shareBoard of response.data) {
-          if (shareBoard.endDate == null) {
-            noEndDates.push(shareBoard)
-            setShareBoardList(shareBoards)
+        for (let personalBoard of response.data) {
+          if (personalBoard.endDate == null) {
+            noEndDates.push(personalBoard)
             continue
           }
-          let target = moment(shareBoard.endDate, "YYYY/MM/DD HH:mm:ss")
+          let target = moment(personalBoard.endDate, "YYYY/MM/DD HH:mm:ss")
           let distanceDay = moment.duration(target.diff(today)).asDays()
           if (distanceDay > 7) {
-            overWeeks.push(shareBoard)
+            overWeeks.push(personalBoard)
           } else if (distanceDay > 3) {
-            threeDays.push(shareBoard)
+            threeDays.push(personalBoard)
           } else if (distanceDay > 0) {
-            oneDays.push(shareBoard)
+            oneDays.push(personalBoard)
           }
-          shareBoards.push(shareBoard)
+          personalBoards.push(personalBoard)
         }
         setNoEndDates(noEndDates)
         setOneDayBefores(oneDays)
         setThreeDayBefores(threeDays)
         setWeekBefores(overWeeks)
-        setShareBoardList(shareBoards)
+        setPersonalBoardList(personalBoards)
       }).catch(error => {
         if (error.response.status === 401) {
           deleteCookie("token", "")
@@ -355,114 +294,6 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
   React.useEffect(() => {
     getShareBoardList()
   }, [])
-
-  const setDetailView = () => {
-    let today = moment()
-    let end = moment(detail.endDate, "YYYY/MM/DD HH:mm:ss")
-    let endString = end.format("YYYY년MM월DD일 HH시간mm분")
-    let startString = "정보가 없습니다."
-    let desc = "정보가 없습니다."
-    let bgColor = "green"
-
-    if (detail.desc !== null) {
-      desc = detail.desc
-    }
-    if (detail.startDate !== null && detail.startDate !== "") {
-      let start = moment(detail.startDate, "YYYY/MM/DD HH:mm:ss")
-      startString = start.format("YYYY년MM월DD일 HH시간mm분")
-    }
-
-    let distanceDay = parseInt(moment.duration(end.diff(today)).asDays())
-
-    if (distanceDay >= 7) {
-      bgColor = "green"
-    } else if (distanceDay >= 3) {
-      bgColor = "orange"
-    } else if (distanceDay >= 0) {
-      bgColor = "red"
-    }
-    return (
-      <DetailBody>
-        <DetailAlert style={{ color: "white", backgroundColor: bgColor }}>{distanceDay}일</DetailAlert>
-        <CloseDetail onClick={deleteDetailElement}>
-          <HighlightOffIcon />
-        </CloseDetail>
-        <DayHeader>상세보기</DayHeader>
-        <DetailElement>
-          <DetailHead>공고 이름</DetailHead>
-          <DetailTitle>{detail.title}</DetailTitle>
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>공고 정보</DetailHead>
-          <DetailTitle>{desc}</DetailTitle>
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>공고 시작 날짜</DetailHead>
-          <DetailTitle>{startString}</DetailTitle>
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>공고 마감 날짜</DetailHead>
-          <DetailTitle>{endString}</DetailTitle>
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>공고 URL</DetailHead>
-          <DayUrl href={detail.url}>바로가기</DayUrl>
-        </DetailElement>
-      </DetailBody>
-    )
-  }
-
-  const setRegisterView = () => {
-    return (
-      <DetailBody>
-        <CloseDetail onClick={closeRegisterView}>
-          <HighlightOffIcon />
-        </CloseDetail>
-        <DayHeader>등록하기</DayHeader>
-        <DetailElement>
-          <DetailHead>일정 이름</DetailHead>
-          <TextField
-            size="small"
-            variant="outlined"
-          />
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>일정 정보</DetailHead>
-          <TextField
-            size="medium"
-            variant="outlined"
-            multiline="true"
-            minRows={4}
-            maxRows={10}
-          />
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>일정 시작 날짜</DetailHead>
-          <TextField
-            placeholder="YYYY/MM/DD HH:mm:ss"
-            size="small"
-            variant="outlined"
-          />
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>일정 마감 날짜</DetailHead>
-          <TextField
-            placeholder="YYYY/MM/DD HH:mm:ss"
-            size="small"
-            variant="outlined"
-          />
-        </DetailElement>
-        <DetailElement>
-          <DetailHead>추가 URL</DetailHead>
-          <TextField
-            placeholder="https://example.com"
-            size="small"
-            variant="outlined"
-          />
-        </DetailElement>
-      </DetailBody>
-    )
-  }
 
   const openRegisterView = () => {
     setDetail(null)
@@ -541,8 +372,16 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
             </DayElement>)
           })}
         </OverWeekBody>
-        {detail && setDetailView()}
-        {register && setRegisterView()}
+        {detail && <Detail
+          detail={detail}
+          deleteDetailElement={deleteDetailElement}
+        />}
+        {register && <Register
+          refreshPersonalBoardList={refreshPersonalBoardList}
+          closeRegisterView={closeRegisterView}
+          setAlertMessage={setAlertMessage}
+          setErrorAlert={setErrorAlert}
+        />}
       </PersonalBoardBody>
     </DashboardBody >
   );
