@@ -99,6 +99,7 @@ const DetailHead = styled.div`
 `;
 
 const Register = ({
+  setSuccessAlert,
   refreshShareBoardList,
   closeRegisterView,
   setAlertMessage,
@@ -202,6 +203,9 @@ const Register = ({
 
     post(`/api/shares`, payload)
       .then(response => {
+        setAlertMessage("업로드 완료")
+        setSuccessAlert(true)
+        setTimeout(() => setSuccessAlert(false), 2000);
         let path = response.headers.location
         let newBoard = payload.body
         newBoard.id = parseInt(path.split("/")[2])

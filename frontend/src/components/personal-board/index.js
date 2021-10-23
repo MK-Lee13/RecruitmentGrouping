@@ -377,6 +377,7 @@ const ShareBoard = ({ setErrorAlert, setSuccessAlert, setAlertMessage, }) => {
           deleteDetailElement={deleteDetailElement}
         />}
         {register && <Register
+          setSuccessAlert={setSuccessAlert}
           refreshPersonalBoardList={refreshPersonalBoardList}
           closeRegisterView={closeRegisterView}
           setAlertMessage={setAlertMessage}
