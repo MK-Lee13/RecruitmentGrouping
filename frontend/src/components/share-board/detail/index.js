@@ -185,11 +185,11 @@ const Detail = ({ detail, deleteDetailElement, }) => {
       </CloseDetail>
       <DetailHeader>상세보기</DetailHeader>
       <DetailElement>
-        <DetailHead>공고 이름</DetailHead>
-        <DetailTitle>{detail.title}</DetailTitle>
-      </DetailElement>
-      <DetailElement>
         <DetailHead>공고 정보</DetailHead>
+        <DetailTitle>{detail.title}</DetailTitle>
+        {/* </DetailElement>
+      <DetailElement> */}
+        {/* <DetailHead>공고 정보</DetailHead> */}
         <DetailTitle>{desc}</DetailTitle>
       </DetailElement>
       <DetailElement>
